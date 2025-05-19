@@ -1,0 +1,6 @@
+version: '3.8'
+
+services:
+  ticket_price_tracker:
+    build: .
+    container_name: ticket_price_tracker
