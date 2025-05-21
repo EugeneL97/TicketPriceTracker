@@ -10,7 +10,9 @@ headers = {
 response = requests.get(url, headers=headers)
 data = response.json()
 
-# Define your target sections
+# Define your parameters
+MAX_PRICE_PER_TICKET = 350
+REQUIRED_QUANTITY = 4
 target_sections = [str(i) for i in range(305, 315)] + [str(i) for i in range(327, 337)]
 
 print("Checking target sections...")
@@ -22,25 +24,69 @@ if global_metadata:
     print(f"Venue: {event_info.get('mapTitle', 'Unknown')}")
     print("-" * 40)
 
+# Create a list to store filtered tickets
+filtered_tickets = []
+
 # Process tickets listings
 tickets = data.get('tickets', [])
 if not tickets:
     print("No tickets found.")
 else:
     for listing in tickets:
-        section_id = listing.get('i', 'Unknown')
         section_label = listing.get('l', 'Unknown')
         price = listing.get('p', 'Unknown')
-        row = listing.get('r', 'Unknown')
         quantity = listing.get('q', 'Unknown')
-        notes = listing.get('n', 'No additional notes')
+        
+        # Split section label to get components
+        label_parts = section_label.split()
+        if len(label_parts) >= 3:  # Ensure we have enough parts
+            level = label_parts[0]
+            section_number = label_parts[-1]  # Get the last part (3-digit number)
+            
+            # Check if this listing matches our criteria
+            if (int(quantity) == REQUIRED_QUANTITY and
+                section_number in target_sections and
+                price != 'Unknown' and
+                float(price) <= MAX_PRICE_PER_TICKET):
+                
+                # Get base price and calculate fees
+                base_price = float(price)
+                all_inclusive_price = float(listing.get('aip', base_price))
+                total_fees = all_inclusive_price - base_price
+                
+                # Construct the ticket URL
+                listing_id = listing.get('i', '')
+                production_id = "5471078"
+                ticket_url = f"https://www.vividseats.com/new-england-patriots-tickets-gillette-stadium-3-6-2026--sports-nfl-football/production/{production_id}?showDetails={listing_id}&qty={REQUIRED_QUANTITY}"
+                
+                filtered_tickets.append({
+                    'section': section_number,
+                    'level': level,
+                    'base_price': base_price,
+                    'fees': total_fees,
+                    'total_price': all_inclusive_price,
+                    'row': listing.get('r', 'Unknown'),
+                    'notes': listing.get('n', 'No additional notes'),
+                    'url': ticket_url
+                })
 
-        print(f"Section ID   : {section_id}")
-        print(f"Section Label: {section_label}")
-        print(f"Row          : {row}")
-        print(f"Quantity     : {quantity}")
-        print(f"Price        : ${price}")
-        print(f"Notes        : {notes}")
+    # Sort filtered tickets by total price
+    filtered_tickets.sort(key=lambda x: x['total_price'])
+
+    # Display results
+    if filtered_tickets:
+        print(f"\nFound {len(filtered_tickets)} matching listings under ${MAX_PRICE_PER_TICKET} per ticket:")
         print("-" * 40)
+        for ticket in filtered_tickets:
+            print(f"Section      : {ticket['section']} ({ticket['level']})")
+            print(f"Row          : {ticket['row']}")
+            print(f"Base Price   : ${ticket['base_price']:.2f}")
+            print(f"Fees         : ${ticket['fees']:.2f}")
+            print(f"Total Price  : ${ticket['total_price']:.2f}")
+            print(f"Notes        : {ticket['notes']}")
+            print(f"Purchase URL : {ticket['url']}")
+            print("-" * 40)
+    else:
+        print(f"\nNo tickets found matching your criteria (4 tickets, target sections, under ${MAX_PRICE_PER_TICKET})")
 
 print("Done.")
