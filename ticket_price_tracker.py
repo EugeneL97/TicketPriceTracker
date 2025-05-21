@@ -13,6 +13,8 @@ data = response.json()
 # Define your parameters
 MAX_PRICE_PER_TICKET = 350
 REQUIRED_QUANTITY = 4
+production_id = 'Unknown'
+
 target_sections = [str(i) for i in range(305, 315)] + [str(i) for i in range(327, 337)]
 
 print("Checking target sections...")
@@ -20,6 +22,7 @@ print("Checking target sections...")
 global_metadata = data.get('global', [])
 if global_metadata:
     event_info = global_metadata[0]
+    production_id = event_info.get('productionId', 'Unknown')
     print(f"Event: {event_info.get('productionName', 'Unknown')}")
     print(f"Venue: {event_info.get('mapTitle', 'Unknown')}")
     print("-" * 40)
@@ -56,7 +59,6 @@ else:
                 
                 # Construct the ticket URL
                 listing_id = listing.get('i', '')
-                production_id = "5471078"
                 ticket_url = f"https://www.vividseats.com/new-england-patriots-tickets-gillette-stadium-3-6-2026--sports-nfl-football/production/{production_id}?showDetails={listing_id}&qty={REQUIRED_QUANTITY}"
                 
                 filtered_tickets.append({
@@ -71,7 +73,7 @@ else:
                 })
 
     # Sort filtered tickets by total price
-    filtered_tickets.sort(key=lambda x: x['total_price'])
+    filtered_tickets.sort(key=lambda x: x['total_price'], reverse=True)
 
     # Display results
     if filtered_tickets:
