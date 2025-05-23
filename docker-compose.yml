@@ -1,6 +1,10 @@
-version: '3.8'
+version: '3'
 
 services:
-  ticket_price_tracker:
+  ticket-tracker:
     build: .
-    container_name: ticket_price_tracker
+    volumes:
+      - ./data:/app/data  # Maps a local 'data' folder to container's data folder
+    environment:
+      - DB_PATH=/app/data/ticket_history.db
+      - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/1375485449249751141/MvbLOOYD1BkQNmjSjdZVZVuxHD0VOGoA1K6n5Z5uGSKKGzPsPrUzyoO-WgPvAfLn-mrG
