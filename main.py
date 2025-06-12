@@ -2,9 +2,10 @@ import time
 from ticket_price_tracker import TicketTracker
 from datetime import datetime
 from discord_webhook import DiscordWebhook, DiscordEmbed
+import os
 
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1375485449249751141/MvbLOOYD1BkQNmjSjdZVZVuxHD0VOGoA1K6n5Z5uGSKKGzPsPrUzyoO-WgPvAfLn-mrG"  # You'll need to create this in Discord
-
+DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
+print(DISCORD_WEBHOOK_URL)
 def send_discord_notification(title, message, url=None):
     """Send a Discord notification"""
     webhook = DiscordWebhook(

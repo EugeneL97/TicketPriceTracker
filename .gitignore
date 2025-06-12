@@ -1,3 +1,2 @@
-# Ignore SQLite database
-data/
-*.db 
+/.env
+/data
