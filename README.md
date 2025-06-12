@@ -1,3 +1,5 @@
-I'm looking to create a script that gathers information on ticket prices for event games and returns the highs and lows for the prices to alert me when the best time is to buy them.
+I've created a script that gathers information on ticket prices for the Raiders vs Patriots game and notifies me via Discord Webhook when the prices increase or decrease for them. My friends and I want to attend the game at a reasonable cost.
 
-Currently, I'm using this to scout out 4 tickets for the Raiders vs Patriots game so my friend group, who is a mix of Raiders and Patriots fans, to get to enjoy the game live, and at a reasonable price.
+Working Example
+
+<img width="516" alt="Screenshot 2025-06-04 at 8 14 22 AM" src="https://github.com/user-attachments/assets/6ed1f406-90a5-4eb2-a6d4-462af467439b" />
